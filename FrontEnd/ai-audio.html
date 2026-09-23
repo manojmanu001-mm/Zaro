@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zaro AI Audio Studio</title>
+
+    <link rel="stylesheet" href="zaro.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #08090d;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .audio-workspace {
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        /* HEADER */
+
+        .audio-header {
+            max-width: 1400px;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            color: #999;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            color: white;
+        }
+
+        .audio-header h1 {
+            margin: 12px 0 6px;
+            font-size: 32px;
+        }
+
+        .audio-header p {
+            margin: 0;
+            color: #888;
+        }
+
+        /* LAYOUT */
+
+        .audio-layout {
+            max-width: 1400px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 25px;
+        }
+
+        .generator-panel,
+        .preview-panel {
+            background: #111319;
+            border: 1px solid #252832;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* INPUT */
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #ccc;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        textarea,
+        select,
+        input {
+            width: 100%;
+            padding: 13px;
+
+            background: #08090d;
+            color: white;
+
+            border: 1px solid #2c3039;
+            border-radius: 10px;
+
+            outline: none;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        select:focus,
+        input:focus {
+            border-color: #777;
+        }
+
+        /* AUDIO TYPE */
+
+        .audio-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .audio-type {
+            padding: 13px 8px;
+
+            background: #0b0c11;
+            color: #aaa;
+
+            border: 1px solid #292d36;
+            border-radius: 10px;
+
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .audio-type:hover {
+            border-color: #777;
+            color: white;
+        }
+
+        .audio-type.active {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+
+        /* TWO COLUMNS */
+
+        .option-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* RANGE */
+
+        .range-value {
+            color: #aaa;
+            font-size: 13px;
+            float: right;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            accent-color: white;
+        }
+
+        /* GENERATE */
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+
+            background: white;
+            color: black;
+
+            border: none;
+            border-radius: 11px;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .generate-btn:hover {
+            background: #ddd;
+            transform: translateY(-2px);
+        }
+
+        /* PREVIEW */
+
+        .preview-box {
+            min-height: 560px;
+
+            background: #08090d;
+            border: 1px dashed #30343e;
+            border-radius: 15px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 25px;
+            text-align: center;
+        }
+
+        .empty-preview {
+            max-width: 500px;
+        }
+
+        .preview-icon {
+            font-size: 65px;
+            margin-bottom: 15px;
+        }
+
+        .empty-preview p {
+            color: #777;
+            line-height: 1.6;
+        }
+
+        /* LOADING */
+
+        .loading {
+            display: none;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+
+            border: 4px solid #333;
+            border-top: 4px solid white;
+
+            border-radius: 50%;
+
+            animation: spin 1s linear infinite;
+
+            margin: auto auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* RESULT */
+
+        .result {
+            display: none;
+            width: 100%;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .audio-card {
+            background: #0b0c11;
+            border: 1px solid #282c35;
+
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .audio-card h2 {
+            margin-top: 0;
+        }
+
+        .audio-description {
+            color: #777;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* AUDIO PLAYER */
+
+        .audio-player {
+            width: 100%;
+            margin: 10px 0 20px;
+        }
+
+        /* WAVEFORM */
+
+        .waveform {
+            height: 100px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 4px;
+
+            background: #08090d;
+            border: 1px solid #252832;
+
+            border-radius: 12px;
+            padding: 15px;
+
+            overflow: hidden;
+        }
+
+        .wave {
+            width: 4px;
+            background: #777;
+            border-radius: 5px;
+            animation: waveAnimation 1s ease-in-out infinite alternate;
+        }
+
+        .wave:nth-child(2n) {
+            animation-delay: 0.1s;
+        }
+
+        .wave:nth-child(3n) {
+            animation-delay: 0.2s;
+        }
+
+        .wave:nth-child(4n) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes waveAnimation {
+            from {
+                height: 15px;
+            }
+
+            to {
+                height: 70px;
+            }
+        }
+
+        /* INFO */
+
+        .audio-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .info-card {
+            background: #08090d;
+            border: 1px solid #252832;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .info-card span {
+            display: block;
+            color: #777;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-card strong {
+            font-size: 14px;
+        }
+
+        /* ACTIONS */
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .result-actions button {
+            flex: 1;
+
+            padding: 12px;
+
+            background: #15171d;
+            color: white;
+
+            border: 1px solid #333;
+            border-radius: 9px;
+
+            cursor: pointer;
+        }
+
+        .result-actions button:hover {
+            background: #22252d;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 900px) {
+
+            .audio-workspace {
+                padding: 18px;
+            }
+
+            .audio-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .audio-header h1 {
+                font-size: 27px;
+            }
+
+            .preview-box {
+                min-height: 400px;
+            }
+        }
+
+        @media (max-width: 550px) {
+
+            .generator-panel,
+            .preview-panel {
+                padding: 18px;
+                border-radius: 14px;
+            }
+
+            .audio-types {
+                grid-template-columns: 1fr;
+            }
+
+            .option-row {
+                grid-template-columns: 1fr;
+            }
+
+            .audio-info {
+                grid-template-columns: 1fr;
+            }
+
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="audio-workspace">
+
+    <!-- HEADER -->
+
+    <div class="audio-header">
+
+        <a href="Dashboard.html" class="back-btn">
+            ← Back to Dashboard
+        </a>
+
+        <h1>AI Audio Studio</h1>
+
+        <p>
+            Create voiceovers, music and sound effects with Zaro AI.
+        </p>
+
+    </div>
+
+
+    <div class="audio-layout">
+
+        <!-- =================================
+             GENERATOR PANEL
+        ================================== -->
+
+        <div class="generator-panel">
+
+            <div class="panel-title">
+                Create Audio
+            </div>
+
+
+            <!-- AUDIO TYPE -->
+
+            <div class="input-group">
+
+                <label>
+                    Audio Type
+                </label>
+
+                <div class="audio-types">
+
+                    <button
+                        class="audio-type active"
+                        onclick="selectAudioType(this, 'AI Voiceover')">
+
+                        🎙️ AI Voice
+
+                    </button>
+
+                    <button
+                        class="audio-type"
+                        onclick="selectAudioType(this, 'AI Music')">
+
+                        🎵 AI Music
+
+                    </button>
+
+                    <button
+                        class="audio-type"
+                        onclick="selectAudioType(this, 'Sound Effects')">
+
+                        🔊 Sound FX
+
+                    </button>
+
+                    <button
+                        class="audio-type"
+                        onclick="selectAudioType(this, 'Narration')">
+
+                        📖 Narration
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- TEXT -->
+
+            <div class="input-group">
+
+                <label>
+                    Script / Description
+                </label>
+
+                <textarea
+                    id="audioText"
+                    placeholder="Example: Welcome to Zaro Technologies. Turn your ideas into powerful digital experiences..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- LANGUAGE + VOICE -->
+
+            <div class="option-row">
+
+                <div class="input-group">
+
+                    <label>
+                        Language
+                    </label>
+
+                    <select id="language">
+
+                        <option>English</option>
+                        <option>Kannada</option>
+                        <option>Hindi</option>
+                        <option>Tamil</option>
+                        <option>Telugu</option>
+                        <option>Malayalam</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Voice
+                    </label>
+
+                    <select id="voice">
+
+                        <option>Professional Male</option>
+                        <option>Professional Female</option>
+                        <option>Energetic Male</option>
+                        <option>Energetic Female</option>
+                        <option>Calm Male</option>
+                        <option>Calm Female</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- STYLE -->
+
+            <div class="input-group">
+
+                <label>
+                    Voice Style
+                </label>
+
+                <select id="voiceStyle">
+
+                    <option>Professional</option>
+                    <option>Energetic</option>
+                    <option>Friendly</option>
+                    <option>Cinematic</option>
+                    <option>Emotional</option>
+                    <option>Storytelling</option>
+
+                </select>
+
+            </div>
+
+
+            <!-- SPEED -->
+
+            <div class="input-group">
+
+                <label>
+
+                    Speaking Speed
+
+                    <span
+                        class="range-value"
+                        id="speedValue">
+
+                        1.0x
+
+                    </span>
+
+                </label>
+
+                <input
+                    type="range"
+                    id="speed"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value="1"
+                    oninput="updateSpeed()"
+                >
+
+            </div>
+
+
+            <!-- GENERATE -->
+
+            <button
+                class="generate-btn"
+                onclick="generateAudio()">
+
+                ✨ Generate Audio
+
+            </button>
+
+        </div>
+
+
+        <!-- =================================
+             PREVIEW PANEL
+        ================================== -->
+
+        <div class="preview-panel">
+
+            <div class="panel-title">
+                Audio Preview
+            </div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                class="preview-box"
+                id="emptyPreview">
+
+                <div class="empty-preview">
+
+                    <div class="preview-icon">
+                        🎧
+                    </div>
+
+                    <h2>
+                        Your audio will appear here
+                    </h2>
+
+                    <p>
+                        Enter your script or describe the audio
+                        you want Zaro to create.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOADING -->
+
+            <div
+                class="preview-box loading"
+                id="loadingPreview">
+
+                <div>
+
+                    <div class="loader"></div>
+
+                    <h2>
+                        Creating your audio...
+                    </h2>
+
+                    <p style="color:#777;">
+                        Zaro AI is preparing your audio.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                class="result"
+                id="audioResult">
+
+                <div class="audio-card">
+
+                    <h2 id="resultTitle">
+                        Zaro AI Voice
+                    </h2>
+
+                    <p
+                        class="audio-description"
+                        id="resultDescription">
+
+                        Your generated audio is ready.
+
+                    </p>
+
+
+                    <!-- WAVEFORM -->
+
+                    <div class="waveform">
+
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+
+                    </div>
+
+
+                    <!-- DEMO AUDIO -->
+
+                    <audio
+                        id="audioPlayer"
+                        class="audio-player"
+                        controls>
+
+                        <source
+                            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+                            type="audio/mpeg">
+
+                    </audio>
+
+
+                    <!-- INFO -->
+
+                    <div class="audio-info">
+
+                        <div class="info-card">
+
+                            <span>
+                                Type
+                            </span>
+
+                            <strong id="resultType">
+                                AI Voiceover
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span>
+                                Language
+                            </span>
+
+                            <strong id="resultLanguage">
+                                English
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span>
+                                Voice
+                            </span>
+
+                            <strong id="resultVoice">
+                                Professional Male
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="result-actions">
+
+                        <button onclick="saveAudio()">
+                            💾 Save Project
+                        </button>
+
+                        <button onclick="downloadAudio()">
+                            ⬇️ Export Audio
+                        </button>
+
+                        <button onclick="createAnother()">
+                            🔄 Create Another
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =================================
+       AUDIO TYPE
+    ================================= */
+
+    let selectedAudioType = "AI Voiceover";
+
+
+    function selectAudioType(button, type) {
+
+        document
+            .querySelectorAll(".audio-type")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+        button.classList.add("active");
+
+        selectedAudioType = type;
+
+    }
+
+
+    /* =================================
+       SPEED
+    ================================= */
+
+    function updateSpeed() {
+
+        const speed =
+            document.getElementById("speed").value;
+
+        document
+            .getElementById("speedValue")
+            .textContent = speed + "x";
+
+    }
+
+
+    /* =================================
+       GENERATE AUDIO
+    ================================= */
+
+    function generateAudio() {
+
+        const text =
+            document
+                .getElementById("audioText")
+                .value
+                .trim();
+
+
+        if (!text) {
+
+            alert(
+                "Please enter a script or audio description."
+            );
+
+            return;
+
+        }
+
+
+        const language =
+            document.getElementById("language").value;
+
+        const voice =
+            document.getElementById("voice").value;
+
+
+        /* Hide empty state */
+
+        document
+            .getElementById("emptyPreview")
+            .style.display = "none";
+
+
+        /* Show loading */
+
+        document
+            .getElementById("loadingPreview")
+            .classList.add("active");
+
+
+        /* Hide previous result */
+
+        document
+            .getElementById("audioResult")
+            .classList.remove("active");
+
+
+        /*
+            FRONTEND SIMULATION
+
+            Later:
+
+            Frontend
+                ↓
+            Zaro Backend
+                ↓
+            AI Audio API
+                ↓
+            Generated Audio
+        */
+
+        setTimeout(() => {
+
+            document
+                .getElementById("loadingPreview")
+                .classList.remove("active");
+
+
+            document
+                .getElementById("audioResult")
+                .classList.add("active");
+
+
+            document
+                .getElementById("resultType")
+                .textContent =
+                selectedAudioType;
+
+
+            document
+                .getElementById("resultLanguage")
+                .textContent =
+                language;
+
+
+            document
+                .getElementById("resultVoice")
+                .textContent =
+                voice;
+
+
+            document
+                .getElementById("resultTitle")
+                .textContent =
+                selectedAudioType;
+
+
+            document
+                .getElementById("resultDescription")
+                .textContent =
+                "Your Zaro audio preview is ready. " +
+                "The real AI generation engine will be connected later.";
+
+        }, 2000);
+
+    }
+
+
+    /* =================================
+       SAVE
+    ================================= */
+
+    function saveAudio() {
+
+        alert(
+            "Audio project saved!\n\n" +
+            "Database connection will be added later."
+        );
+
+    }
+
+
+    /* =================================
+       DOWNLOAD
+    ================================= */
+
+    function downloadAudio() {
+
+        const audio =
+            document.getElementById("audioPlayer");
+
+
+        if (!audio.src) {
+
+            alert("No audio available.");
+
+            return;
+
+        }
+
+
+        const link =
+            document.createElement("a");
+
+        link.href = audio.src;
+
+        link.download =
+            "zaro-ai-audio.mp3";
+
+        link.target = "_blank";
+
+        link.click();
+
+    }
+
+
+    /* =================================
+       CREATE ANOTHER
+    ================================= */
+
+    function createAnother() {
+
+        document
+            .getElementById("audioResult")
+            .classList.remove("active");
+
+
+        document
+            .getElementById("emptyPreview")
+            .style.display = "flex";
+
+
+        document
+            .getElementById("audioText")
+            .value = "";
+
+    }
+
+</script>
+
+</body>
+</html>

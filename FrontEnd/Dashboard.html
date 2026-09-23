@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Zaro Dashboard</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #08080d;
+            color: white;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .dashboard {
+            min-height: 100vh;
+            display: flex;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #0d0d13;
+            border-right: 1px solid #20202a;
+            padding: 25px 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            padding: 5px 15px 30px;
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: #8175ff;
+        }
+
+
+        .menu-title {
+            color: #62626e;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            padding: 0 15px;
+            margin: 20px 0 10px;
+        }
+
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+
+        .nav-item {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            color: #92929e;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+
+        .nav-item:hover {
+            background: #17171f;
+            color: white;
+        }
+
+
+        .nav-item.active {
+            background: #191824;
+            color: white;
+        }
+
+
+        .nav-icon {
+            display: inline-block;
+            width: 25px;
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           SIDEBAR BOTTOM
+        ========================= */
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 25px;
+        }
+
+
+        .logout {
+            width: 100%;
+            padding: 12px 15px;
+            background: transparent;
+            border: none;
+            color: #888894;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 9px;
+        }
+
+
+        .logout:hover {
+            background: #17171f;
+            color: #ff7888;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            height: 72px;
+            border-bottom: 1px solid #20202a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            background: rgba(8,8,13,0.95);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+
+        .mobile-menu {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+
+        .welcome {
+            color: #858592;
+            font-size: 13px;
+        }
+
+
+        .welcome strong {
+            color: white;
+        }
+
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .avatar {
+            width: 37px;
+            height: 37px;
+            border-radius: 50%;
+            background: linear-gradient(
+                135deg,
+                #7668ff,
+                #4c9cff
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            padding: 40px 35px 60px;
+            max-width: 1500px;
+            margin: auto;
+        }
+
+
+        .page-heading {
+            margin-bottom: 35px;
+        }
+
+
+        .page-heading p {
+            color: #747480;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+
+        .page-heading h1 {
+            font-size: 35px;
+            letter-spacing: -1px;
+        }
+
+
+        /* =========================
+           QUICK CREATE
+        ========================= */
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 17px;
+        }
+
+
+        .create-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 45px;
+        }
+
+
+        .create-card {
+            min-height: 155px;
+            padding: 22px;
+            border: 1px solid #24242e;
+            border-radius: 15px;
+            background: #101016;
+            cursor: pointer;
+            transition: 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .create-card:hover {
+            transform: translateY(-4px);
+            border-color: #6258bd;
+            background: #13131b;
+        }
+
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #191827;
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+
+        .create-card h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+
+        .create-card p {
+            color: #777782;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+
+        .card-arrow {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            color: #8175ff;
+        }
+
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 45px;
+        }
+
+
+        .stat-card {
+            background: #101016;
+            border: 1px solid #24242e;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+
+        .stat-card p {
+            color: #777782;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+
+        .stat-card h2 {
+            font-size: 26px;
+        }
+
+
+        /* =========================
+           PROJECTS
+        ========================= */
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 17px;
+        }
+
+
+        .view-all {
+            border: none;
+            background: transparent;
+            color: #8e82ff;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+
+        .projects {
+            border: 1px solid #24242e;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #101016;
+        }
+
+
+        .empty-projects {
+            padding: 55px 20px;
+            text-align: center;
+        }
+
+
+        .empty-icon {
+            width: 55px;
+            height: 55px;
+            margin: auto auto 15px;
+            border-radius: 14px;
+            background: #191827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+
+        .empty-projects h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+
+        .empty-projects p {
+            color: #73737e;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+
+        .primary-button {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 18px;
+            background: linear-gradient(
+                135deg,
+                #7567ff,
+                #4c9cff
+            );
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================
+           OVERLAY
+        ========================= */
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 90;
+        }
+
+
+        .overlay.show {
+            display: block;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+
+            .create-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.25s;
+            }
+
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+
+            .mobile-menu {
+                display: block;
+            }
+
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+
+            .content {
+                padding: 30px 20px 50px;
+            }
+
+        }
+
+
+        @media (max-width: 550px) {
+
+            .welcome {
+                display: none;
+            }
+
+
+            .page-heading h1 {
+                font-size: 28px;
+            }
+
+
+            .create-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+
+            .stat-card {
+                padding: 17px;
+            }
+
+
+            .stat-card h2 {
+                font-size: 21px;
+            }
+
+
+            .content {
+                padding: 25px 15px 40px;
+            }
+
+        }
+
+
+        @media (max-width: 350px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- ACCESS VERIFICATION SCREEN -->
+
+<div id="accessVerification" class="access-verification">
+
+    <div class="access-card">
+
+        <div class="access-icon">
+            🔒
+        </div>
+
+        <h1>Access Verification</h1>
+
+        <p id="accessMessage">
+            Checking your Zaro account...
+        </p>
+
+        <div class="access-loader"></div>
+
+    </div>
+
+</div>
+
+
+<div class="dashboard">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            ZARO<span>.</span>
+        </div>
+
+
+        <p class="menu-title">
+            WORKSPACE
+        </p>
+
+
+        <nav class="nav-menu">
+
+            <button class="nav-item active"
+                    onclick="showSection('overview', this)">
+                <span class="nav-icon">⌂</span>
+                Overview
+            </button>
+
+
+            <button class="nav-item"
+                    onclick="showSection('create', this)">
+                <span class="nav-icon">✦</span>
+                Create
+            </button>
+
+
+            <button class="nav-item"
+                    onclick="showSection('projects', this)">
+                <span class="nav-icon">▣</span>
+                My Projects
+            </button>
+
+
+            <button class="nav-item"
+                    onclick="showSection('templates', this)">
+                <span class="nav-icon">◈</span>
+                Templates
+            </button>
+
+
+            <p class="menu-title">
+                BRAND
+            </p>
+
+
+            <button class="nav-item"
+                    onclick="showSection('brand', this)">
+                <span class="nav-icon">◆</span>
+                Brand Kit
+            </button>
+
+
+            <button class="nav-item"
+                    onclick="showSection('downloads', this)">
+                <span class="nav-icon">↓</span>
+                Downloads
+            </button>
+
+
+            <p class="menu-title">
+                ACCOUNT
+            </p>
+
+
+            <button class="nav-item"
+                    onclick="showSection('settings', this)">
+                <span class="nav-icon">⚙</span>
+                Settings
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button
+                class="logout"
+                onclick="logout()"
+            >
+                ⇥ &nbsp; Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <div
+        class="overlay"
+        id="overlay"
+        onclick="closeSidebar()"
+    ></div>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                onclick="toggleSidebar()"
+            >
+                ☰
+            </button>
+
+
+            <p class="welcome">
+                Welcome back,
+                <strong id="userName">
+                    Creator
+                </strong>
+            </p>
+
+
+            <div class="profile">
+
+                <div
+                    class="avatar"
+                    id="avatar"
+                >
+                    Z
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <div class="page-heading">
+
+                <p>
+                    ZARO CREATOR WORKSPACE
+                </p>
+
+                <h1>
+                    What will you create today?
+                </h1>
+
+            </div>
+
+
+
+            <!-- QUICK CREATE -->
+
+            <h2 class="section-title">
+                Create with AI
+            </h2>
+
+
+            <div class="create-grid">
+
+
+                <div
+                    class="create-card"
+                    onclick="openTool('AI Content')"
+                >
+
+                    <div class="card-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        AI Content
+                    </h3>
+
+                    <p>
+                        Generate ideas, scripts,
+                        captions and content plans.
+                    </p>
+
+                    <span class="card-arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="create-card"
+                    onclick="openTool('AI Video')"
+                >
+
+                    <div class="card-icon">
+                        ▶
+                    </div>
+
+                    <h3>
+                        AI Video
+                    </h3>
+
+                    <p>
+                        Turn ideas, scripts and
+                        images into videos.
+                    </p>
+
+                    <span class="card-arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="create-card"
+                    onclick="openTool('AI Image')"
+                >
+
+                    <div class="card-icon">
+                        ◉
+                    </div>
+
+                    <h3>
+                        AI Image
+                    </h3>
+
+                    <p>
+                        Create visual content
+                        from your ideas.
+                    </p>
+
+                    <span class="card-arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="create-card"
+                    onclick="openTool('AI Audio')"
+                >
+
+                    <div class="card-icon">
+                        ♪
+                    </div>
+
+                    <h3>
+                        AI Audio
+                    </h3>
+
+                    <p>
+                        Generate voiceovers,
+                        narration and audio.
+                    </p>
+
+                    <span class="card-arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="create-card"
+                    onclick="openTool('AI Editor')"
+                >
+
+                    <div class="card-icon">
+                        ✂
+                    </div>
+
+                    <h3>
+                        AI Editor
+                    </h3>
+
+                    <p>
+                        Edit videos, captions,
+                        music and effects.
+                    </p>
+
+                    <span class="card-arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="create-card"
+                    onclick="openTool('Make It For Me')"
+                >
+
+                    <div class="card-icon">
+                        ✨
+                    </div>
+
+                    <h3>
+                        Make It For Me
+                    </h3>
+
+                    <p>
+                        Give Zaro your idea and
+                        content. Let AI do the work.
+                    </p>
+
+                    <span class="card-arrow">
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- STATS -->
+
+            <h2 class="section-title">
+                Your Workspace
+            </h2>
+
+
+            <div class="stats">
+
+                <div class="stat-card">
+                    <p>Projects</p>
+                    <h2 id="projectCount">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>AI Generations</p>
+                    <h2>0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Videos Created</p>
+                    <h2>0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Storage Used</p>
+                    <h2>0 MB</h2>
+                </div>
+
+            </div>
+
+
+
+            <!-- RECENT PROJECTS -->
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Recent Projects
+                </h2>
+
+                <button
+                    class="view-all"
+                    onclick="showSection('projects')"
+                >
+                    View all →
+                </button>
+
+            </div>
+
+
+            <div class="projects">
+
+                <div class="empty-projects">
+
+                    <div class="empty-icon">
+                        ▣
+                    </div>
+
+                    <h3>
+                        No projects yet
+                    </h3>
+
+                    <p>
+                        Start creating and your projects
+                        will appear here.
+                    </p>
+
+                    <button
+                        class="primary-button"
+                        onclick="openTool('AI Content')"
+                    >
+                        Create your first project
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<script>
+/* =========================================
+   ZARO DASHBOARD AUTHENTICATION
+========================================= */
+
+(function () {
+    const token = localStorage.getItem("zaroToken");
+    const storedUser = localStorage.getItem("zaroUser");
+
+    /*
+       Only redirect when the user is genuinely
+       not logged in.
+
+       Do NOT check payment status here.
+       Payment/plan checking belongs inside
+       the AI generation backend.
+    */
+    if (!token || !storedUser) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    let user = null;
+
+    try {
+        user = JSON.parse(storedUser);
+    } catch (error) {
+        console.error("Invalid saved user data:", error);
+
+        localStorage.removeItem("zaroToken");
+        localStorage.removeItem("zaroUser");
+
+        window.location.href = "login.html";
+        return;
+    }
+
+    /* =========================================
+       DISPLAY USER INFORMATION
+    ========================================= */
+
+    const userNameElement = document.getElementById("userName");
+    const avatarElement = document.getElementById("avatar");
+
+    if (userNameElement) {
+        userNameElement.textContent = user.name || "Creator";
+    }
+
+    if (avatarElement) {
+        const firstLetter = (user.name || "Z")
+            .charAt(0)
+            .toUpperCase();
+
+        avatarElement.textContent = firstLetter;
+    }
+
+    /* =========================================
+       OPTIONAL ACCESS SCREEN
+
+       This does not block Dashboard access.
+       It only hides the screen if it exists.
+    ========================================= */
+
+    const accessScreen =
+        document.getElementById("accessVerification");
+
+    if (accessScreen) {
+        accessScreen.style.display = "none";
+    }
+
+    /* =========================================
+       MOBILE SIDEBAR
+    ========================================= */
+
+    window.toggleSidebar = function () {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("overlay");
+
+        if (sidebar) {
+            sidebar.classList.toggle("open");
+        }
+
+        if (overlay) {
+            overlay.classList.toggle("show");
+        }
+    };
+
+    window.closeSidebar = function () {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("overlay");
+
+        if (sidebar) {
+            sidebar.classList.remove("open");
+        }
+
+        if (overlay) {
+            overlay.classList.remove("show");
+        }
+    };
+
+    /* =========================================
+       DASHBOARD NAVIGATION
+    ========================================= */
+
+    window.showSection = function (section, button) {
+        document.querySelectorAll(".nav-item").forEach(function (item) {
+            item.classList.remove("active");
+        });
+
+        if (button) {
+            button.classList.add("active");
+        }
+
+        window.closeSidebar();
+
+        if (section === "overview") {
+            window.location.href = "Dashboard.html";
+            return;
+        }
+
+        if (section === "projects") {
+            window.location.href = "my-projects.html";
+            return;
+        }
+
+        if (section === "templates") {
+            window.location.href = "templates.html";
+            return;
+        }
+
+        if (section === "create") {
+            window.location.href = "ai-content.html";
+            return;
+        }
+
+        if (section === "profile") {
+            window.location.href = "profile.html";
+            return;
+        }
+
+        if (section === "pricing") {
+            window.location.href = "pricing.html";
+            return;
+        }
+
+        alert(
+            section.charAt(0).toUpperCase() +
+            section.slice(1) +
+            " workspace will be built next."
+        );
+    };
+
+    /* =========================================
+       AI TOOLS
+    ========================================= */
+
+    window.openTool = function (tool) {
+        window.closeSidebar();
+
+        if (tool === "AI Content") {
+            window.location.href = "ai-content.html";
+            return;
+        }
+
+        if (tool === "AI Video") {
+            window.location.href = "ai-video.html";
+            return;
+        }
+
+        if (tool === "AI Image") {
+            window.location.href = "ai-image.html";
+            return;
+        }
+
+        if (tool === "AI Audio") {
+            window.location.href = "ai-audio.html";
+            return;
+        }
+
+        if (tool === "AI Editor") {
+            window.location.href = "ai-editor.html";
+            return;
+        }
+
+        alert(tool + " workspace will be built next.");
+    };
+
+    /* =========================================
+       LOGOUT
+    ========================================= */
+
+    window.logout = function () {
+        localStorage.removeItem("zaroToken");
+        localStorage.removeItem("zaroUser");
+        localStorage.removeItem("zaroPaymentStatus");
+        localStorage.removeItem("zaroSelectedPlan");
+
+        window.location.href = "login.html";
+    };
+
+})();
+</script>
+
+</body>
+</html>

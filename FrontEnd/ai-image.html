@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zaro AI Image Studio</title>
+
+    <link rel="stylesheet" href="zaro.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #08090d;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .image-workspace {
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        /* HEADER */
+
+        .image-header {
+            max-width: 1400px;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            color: #999;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            color: white;
+        }
+
+        .image-header h1 {
+            margin: 12px 0 6px;
+            font-size: 32px;
+        }
+
+        .image-header p {
+            margin: 0;
+            color: #888;
+        }
+
+        /* MAIN LAYOUT */
+
+        .image-layout {
+            max-width: 1400px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 25px;
+        }
+
+        .generator-panel,
+        .preview-panel {
+            background: #111319;
+            border: 1px solid #252832;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* INPUT */
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #ccc;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        textarea,
+        select,
+        input {
+            width: 100%;
+            padding: 13px;
+
+            background: #08090d;
+            color: white;
+
+            border: 1px solid #2c3039;
+            border-radius: 10px;
+
+            outline: none;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        select:focus,
+        input:focus {
+            border-color: #777;
+        }
+
+        /* STYLE GRID */
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .style-btn {
+            padding: 12px 8px;
+
+            background: #0b0c11;
+            color: #aaa;
+
+            border: 1px solid #292d36;
+            border-radius: 9px;
+
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .style-btn:hover {
+            border-color: #777;
+            color: white;
+        }
+
+        .style-btn.active {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+
+        /* TWO COLUMNS */
+
+        .option-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* GENERATE */
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+
+            border: none;
+            border-radius: 11px;
+
+            background: white;
+            color: black;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            background: #ddd;
+        }
+
+        /* PREVIEW */
+
+        .preview-box {
+            min-height: 560px;
+
+            background: #08090d;
+            border: 1px dashed #30343e;
+
+            border-radius: 15px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+        .empty-preview {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .preview-icon {
+            font-size: 65px;
+            margin-bottom: 15px;
+        }
+
+        .empty-preview h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty-preview p {
+            color: #777;
+            line-height: 1.6;
+        }
+
+        /* LOADING */
+
+        .loading {
+            display: none;
+            text-align: center;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+
+            border: 4px solid #333;
+            border-top: 4px solid white;
+
+            border-radius: 50%;
+
+            animation: spin 1s linear infinite;
+
+            margin: auto auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* IMAGE RESULT */
+
+        .result {
+            display: none;
+            width: 100%;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .generated-image {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+
+            object-fit: cover;
+
+            border-radius: 12px;
+
+            background: #000;
+            border: 1px solid #252832;
+        }
+
+        /* IMAGE INFORMATION */
+
+        .image-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+
+            margin-top: 15px;
+        }
+
+        .info-card {
+            background: #0b0c11;
+            border: 1px solid #252832;
+
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .info-card span {
+            display: block;
+            color: #777;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-card strong {
+            font-size: 14px;
+        }
+
+        /* ACTIONS */
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .result-actions button {
+            flex: 1;
+
+            padding: 12px;
+
+            background: #15171d;
+            color: white;
+
+            border: 1px solid #333;
+            border-radius: 9px;
+
+            cursor: pointer;
+        }
+
+        .result-actions button:hover {
+            background: #22252d;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 900px) {
+
+            .image-workspace {
+                padding: 18px;
+            }
+
+            .image-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .image-header h1 {
+                font-size: 27px;
+            }
+
+            .preview-box {
+                min-height: 400px;
+            }
+        }
+
+        @media (max-width: 550px) {
+
+            .generator-panel,
+            .preview-panel {
+                padding: 18px;
+                border-radius: 14px;
+            }
+
+            .option-row {
+                grid-template-columns: 1fr;
+            }
+
+            .style-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .image-info {
+                grid-template-columns: 1fr;
+            }
+
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="image-workspace">
+
+    <!-- HEADER -->
+
+    <div class="image-header">
+
+        <a href="Dashboard.html" class="back-btn">
+            ← Back to Dashboard
+        </a>
+
+        <h1>AI Image Studio</h1>
+
+        <p>
+            Turn your ideas into stunning AI-generated images.
+        </p>
+
+    </div>
+
+
+    <div class="image-layout">
+
+        <!-- =================================
+             GENERATOR
+        ================================== -->
+
+        <div class="generator-panel">
+
+            <div class="panel-title">
+                Create Your Image
+            </div>
+
+
+            <!-- PROMPT -->
+
+            <div class="input-group">
+
+                <label>
+                    Describe your image
+                </label>
+
+                <textarea
+                    id="imagePrompt"
+                    placeholder="Example: A futuristic city in Bengaluru at night, cinematic lighting, highly detailed..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- STYLE -->
+
+            <div class="input-group">
+
+                <label>
+                    Image Style
+                </label>
+
+                <div class="style-grid">
+
+                    <button
+                        class="style-btn active"
+                        onclick="selectStyle(this, 'Realistic')">
+
+                        📷 Realistic
+
+                    </button>
+
+                    <button
+                        class="style-btn"
+                        onclick="selectStyle(this, 'Cinematic')">
+
+                        🎬 Cinematic
+
+                    </button>
+
+                    <button
+                        class="style-btn"
+                        onclick="selectStyle(this, '3D')">
+
+                        🧊 3D
+
+                    </button>
+
+                    <button
+                        class="style-btn"
+                        onclick="selectStyle(this, 'Anime')">
+
+                        🌸 Anime
+
+                    </button>
+
+                    <button
+                        class="style-btn"
+                        onclick="selectStyle(this, 'Digital Art')">
+
+                        🎨 Digital Art
+
+                    </button>
+
+                    <button
+                        class="style-btn"
+                        onclick="selectStyle(this, 'Product')">
+
+                        🛍️ Product
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- OPTIONS -->
+
+            <div class="option-row">
+
+                <div class="input-group">
+
+                    <label>
+                        Aspect Ratio
+                    </label>
+
+                    <select id="ratio">
+
+                        <option>1:1 Square</option>
+                        <option>16:9 Landscape</option>
+                        <option>9:16 Portrait</option>
+                        <option>4:5 Social</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Quality
+                    </label>
+
+                    <select id="quality">
+
+                        <option>Standard</option>
+                        <option>High</option>
+                        <option>Ultra</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- NUMBER -->
+
+            <div class="input-group">
+
+                <label>
+                    Number of Images
+                </label>
+
+                <select id="imageCount">
+
+                    <option value="1">1 Image</option>
+                    <option value="2">2 Images</option>
+                    <option value="4">4 Images</option>
+
+                </select>
+
+            </div>
+
+
+            <!-- NEGATIVE PROMPT -->
+
+            <div class="input-group">
+
+                <label>
+                    Negative Prompt
+                </label>
+
+                <input
+                    id="negativePrompt"
+                    type="text"
+                    placeholder="Example: blurry, low quality, distorted"
+                >
+
+            </div>
+
+
+            <!-- GENERATE -->
+
+            <button
+                class="generate-btn"
+                onclick="generateImage()">
+
+                ✨ Generate Image
+
+            </button>
+
+        </div>
+
+
+        <!-- =================================
+             PREVIEW
+        ================================== -->
+
+        <div class="preview-panel">
+
+            <div class="panel-title">
+                Image Preview
+            </div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                class="preview-box"
+                id="emptyPreview">
+
+                <div class="empty-preview">
+
+                    <div class="preview-icon">
+                        🖼️
+                    </div>
+
+                    <h2>
+                        Your generated images appear here
+                    </h2>
+
+                    <p>
+                        Describe what you want to create,
+                        select a style and click Generate Image.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOADING -->
+
+            <div
+                class="preview-box loading"
+                id="loadingPreview">
+
+                <div>
+
+                    <div class="loader"></div>
+
+                    <h2>
+                        Creating your image...
+                    </h2>
+
+                    <p style="color:#777;">
+                        Zaro AI is preparing your artwork.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                class="result"
+                id="imageResult">
+
+                <div class="image-grid">
+
+                    <img
+                        id="image1"
+                        class="generated-image"
+                        alt="Zaro generated image">
+
+                    <img
+                        id="image2"
+                        class="generated-image"
+                        alt="Zaro generated image">
+
+                    <img
+                        id="image3"
+                        class="generated-image"
+                        alt="Zaro generated image">
+
+                    <img
+                        id="image4"
+                        class="generated-image"
+                        alt="Zaro generated image">
+
+                </div>
+
+
+                <div class="image-info">
+
+                    <div class="info-card">
+
+                        <span>Style</span>
+
+                        <strong id="resultStyle">
+                            Realistic
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <span>Ratio</span>
+
+                        <strong id="resultRatio">
+                            1:1 Square
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <span>Quality</span>
+
+                        <strong id="resultQuality">
+                            Standard
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-actions">
+
+                    <button onclick="saveImage()">
+                        💾 Save Project
+                    </button>
+
+                    <button onclick="downloadImage()">
+                        ⬇️ Download
+                    </button>
+
+                    <button onclick="generateAnother()">
+                        🔄 Generate Again
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =================================
+       CURRENT STYLE
+    ================================= */
+
+    let selectedStyle = "Realistic";
+
+
+    /* =================================
+       SELECT STYLE
+    ================================= */
+
+    function selectStyle(button, style) {
+
+        document
+            .querySelectorAll(".style-btn")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+        button.classList.add("active");
+
+        selectedStyle = style;
+
+    }
+
+
+    /* =================================
+       GENERATE IMAGE
+    ================================= */
+
+    function generateImage() {
+
+        const prompt =
+            document
+                .getElementById("imagePrompt")
+                .value
+                .trim();
+
+
+        if (!prompt) {
+
+            alert(
+                "Please describe the image you want to create."
+            );
+
+            return;
+
+        }
+
+
+        const ratio =
+            document.getElementById("ratio").value;
+
+        const quality =
+            document.getElementById("quality").value;
+
+        const count =
+            Number(
+                document.getElementById("imageCount").value
+            );
+
+
+        /* Hide empty preview */
+
+        document
+            .getElementById("emptyPreview")
+            .style.display = "none";
+
+
+        /* Show loading */
+
+        document
+            .getElementById("loadingPreview")
+            .classList.add("active");
+
+
+        /* Hide previous result */
+
+        document
+            .getElementById("imageResult")
+            .classList.remove("active");
+
+
+        /*
+            TEMPORARY FRONTEND SIMULATION
+
+            Later this function will call:
+
+            Zaro Frontend
+                 ↓
+            Zaro Backend API
+                 ↓
+            AI Image Generation API
+        */
+
+        setTimeout(() => {
+
+            document
+                .getElementById("loadingPreview")
+                .classList.remove("active");
+
+
+            document
+                .getElementById("imageResult")
+                .classList.add("active");
+
+
+            /* Information */
+
+            document
+                .getElementById("resultStyle")
+                .textContent = selectedStyle;
+
+
+            document
+                .getElementById("resultRatio")
+                .textContent = ratio;
+
+
+            document
+                .getElementById("resultQuality")
+                .textContent = quality;
+
+
+            /*
+                DEMO IMAGES
+
+                These are placeholders only.
+                Later they will be replaced by
+                actual AI-generated image URLs.
+            */
+
+            const demoImages = [
+
+                "https://picsum.photos/seed/zaro1/800/800",
+
+                "https://picsum.photos/seed/zaro2/800/800",
+
+                "https://picsum.photos/seed/zaro3/800/800",
+
+                "https://picsum.photos/seed/zaro4/800/800"
+
+            ];
+
+
+            const images = document
+                .querySelectorAll(".generated-image");
+
+
+            images.forEach((image, index) => {
+
+                if (index < count) {
+
+                    image.src =
+                        demoImages[index];
+
+                    image.style.display = "block";
+
+                } else {
+
+                    image.style.display = "none";
+
+                }
+
+            });
+
+
+        }, 2000);
+
+    }
+
+
+    /* =================================
+       SAVE
+    ================================= */
+
+    function saveImage() {
+
+        alert(
+            "Image project saved!\n\n" +
+            "Database connection will be added later."
+        );
+
+    }
+
+
+    /* =================================
+       DOWNLOAD
+    ================================= */
+
+    function downloadImage() {
+
+        const firstImage =
+            document.getElementById("image1");
+
+
+        if (!firstImage.src) {
+
+            alert("No image available.");
+
+            return;
+
+        }
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href = firstImage.src;
+
+        link.download =
+            "zaro-ai-image.jpg";
+
+        link.target = "_blank";
+
+        link.click();
+
+    }
+
+
+    /* =================================
+       GENERATE ANOTHER
+    ================================= */
+
+    function generateAnother() {
+
+        document
+            .getElementById("imageResult")
+            .classList.remove("active");
+
+
+        document
+            .getElementById("emptyPreview")
+            .style.display = "flex";
+
+
+        document
+            .getElementById("imagePrompt")
+            .value = "";
+
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zaro AI Editor</title>
+
+    <link rel="stylesheet" href="zaro.css">
+
+    <style>
+        /* ==============================
+           AI EDITOR PAGE
+        ============================== */
+
+        body {
+            margin: 0;
+            background: #080b12;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        .editor-page {
+            min-height: 100vh;
+        }
+
+        /* TOP BAR */
+
+        .editor-topbar {
+            height: 70px;
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: #0d111a;
+            border-bottom: 1px solid #202633;
+        }
+
+        .editor-logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .editor-logo span {
+            color: #7c5cff;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .top-btn {
+            padding: 10px 16px;
+            border: 1px solid #303746;
+            background: #151a24;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .top-btn:hover {
+            background: #202735;
+        }
+
+        .export-btn {
+            background: #7c5cff;
+            border-color: #7c5cff;
+        }
+
+        /* EDITOR LAYOUT */
+
+        .editor-layout {
+            display: grid;
+            grid-template-columns: 230px 1fr 280px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* LEFT TOOLBAR */
+
+        .tools-panel {
+            background: #0d111a;
+            border-right: 1px solid #202633;
+            padding: 20px 12px;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            color: #8992a3;
+            text-transform: uppercase;
+            margin: 10px 10px 15px;
+            letter-spacing: 1px;
+        }
+
+        .tool-btn {
+            width: 100%;
+            padding: 13px 12px;
+            margin-bottom: 7px;
+
+            border: none;
+            background: transparent;
+            color: #d9deea;
+
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+        .tool-btn:hover,
+        .tool-btn.active {
+            background: #191f2d;
+            color: #ffffff;
+        }
+
+        /* CENTER */
+
+        .editor-center {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* PREVIEW */
+
+        .preview-area {
+            flex: 1;
+            min-height: 450px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                radial-gradient(circle at center, #161c29 0%, #080b12 65%);
+        }
+
+        .preview-box {
+            width: min(700px, 90%);
+            aspect-ratio: 16 / 9;
+
+            background: #05070b;
+            border: 1px solid #303746;
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: #7e8798;
+        }
+
+        .preview-placeholder h2 {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        #videoPreview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+
+        /* UPLOAD */
+
+        .upload-area {
+            margin-top: 15px;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 12px 18px;
+
+            background: #151a24;
+            border: 1px dashed #555f73;
+
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .upload-btn:hover {
+            border-color: #7c5cff;
+        }
+
+        #mediaUpload {
+            display: none;
+        }
+
+        /* PLAY CONTROLS */
+
+        .play-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+
+            padding: 12px;
+
+            background: #0d111a;
+            border-top: 1px solid #202633;
+        }
+
+        .play-btn {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+            border: none;
+
+            background: #7c5cff;
+            color: white;
+
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .time-display {
+            color: #9ca5b5;
+            font-size: 13px;
+        }
+
+        /* TIMELINE */
+
+        .timeline {
+            height: 190px;
+            background: #0b0f17;
+            border-top: 1px solid #202633;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .timeline-tools {
+            display: flex;
+            gap: 7px;
+        }
+
+        .small-btn {
+            padding: 6px 10px;
+            background: #151a24;
+            color: #dbe1ed;
+            border: 1px solid #303746;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .timeline-track {
+            height: 70px;
+            background: #111621;
+            border: 1px solid #252c3a;
+            border-radius: 7px;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .track-label {
+            position: absolute;
+            left: 8px;
+            top: 7px;
+
+            color: #8992a3;
+            font-size: 11px;
+        }
+
+        .clip {
+            position: absolute;
+            top: 27px;
+            left: 70px;
+
+            width: 260px;
+            height: 30px;
+
+            background: #4f3ba8;
+            border-radius: 5px;
+
+            display: flex;
+            align-items: center;
+
+            padding-left: 10px;
+            box-sizing: border-box;
+
+            font-size: 12px;
+        }
+
+        .clip-audio {
+            top: 62px;
+            left: 70px;
+
+            width: 330px;
+            height: 22px;
+
+            background: #235f58;
+        }
+
+        /* RIGHT PANEL */
+
+        .settings-panel {
+            background: #0d111a;
+            border-left: 1px solid #202633;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+        }
+
+        .settings-section h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .setting-input {
+            width: 100%;
+            box-sizing: border-box;
+
+            background: #141923;
+            color: white;
+
+            border: 1px solid #303746;
+            border-radius: 7px;
+
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .setting-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .setting-option {
+            flex: 1;
+            padding: 9px 5px;
+
+            background: #141923;
+            border: 1px solid #303746;
+
+            color: #cfd5e2;
+            border-radius: 6px;
+
+            cursor: pointer;
+        }
+
+        .setting-option:hover {
+            border-color: #7c5cff;
+        }
+
+        .ai-edit-box {
+            background: #151a24;
+            border: 1px solid #303746;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .ai-edit-box textarea {
+            width: 100%;
+            min-height: 90px;
+
+            box-sizing: border-box;
+
+            background: #0c1018;
+            color: white;
+
+            border: 1px solid #303746;
+            border-radius: 7px;
+
+            padding: 10px;
+            resize: vertical;
+        }
+
+        .ai-edit-btn {
+            width: 100%;
+            margin-top: 10px;
+
+            padding: 11px;
+
+            background: #7c5cff;
+            color: white;
+
+            border: none;
+            border-radius: 7px;
+
+            cursor: pointer;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1100px) {
+
+            .editor-layout {
+                grid-template-columns: 190px 1fr;
+            }
+
+            .settings-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .editor-topbar {
+                padding: 0 12px;
+            }
+
+            .editor-logo {
+                font-size: 18px;
+            }
+
+            .top-btn {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .editor-layout {
+                display: block;
+            }
+
+            .tools-panel {
+                display: flex;
+                overflow-x: auto;
+
+                border-right: none;
+                border-bottom: 1px solid #202633;
+
+                padding: 8px;
+            }
+
+            .panel-title {
+                display: none;
+            }
+
+            .tool-btn {
+                min-width: 95px;
+                margin: 0 4px;
+                text-align: center;
+                padding: 10px 7px;
+            }
+
+            .preview-area {
+                min-height: 300px;
+            }
+
+            .timeline {
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="editor-page">
+
+    <!-- TOP BAR -->
+
+    <header class="editor-topbar">
+
+        <div class="editor-logo">
+            ZA<span>RO</span> AI EDITOR
+        </div>
+
+        <div class="top-actions">
+
+            <button class="top-btn" onclick="undoEdit()">
+                ↶ Undo
+            </button>
+
+            <button class="top-btn" onclick="redoEdit()">
+                ↷ Redo
+            </button>
+
+            <button class="top-btn" onclick="saveProject()">
+                Save
+            </button>
+
+            <button class="top-btn export-btn" onclick="exportVideo()">
+                Export
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- EDITOR -->
+
+    <div class="editor-layout">
+
+        <!-- LEFT TOOLS -->
+
+        <aside class="tools-panel">
+
+            <div class="panel-title">
+                Tools
+            </div>
+
+            <button class="tool-btn active" onclick="selectTool(this, 'Media')">
+                🎬 Media
+            </button>
+
+            <button class="tool-btn" onclick="selectTool(this, 'Text')">
+                T Text
+            </button>
+
+            <button class="tool-btn" onclick="selectTool(this, 'Audio')">
+                🎵 Audio
+            </button>
+
+            <button class="tool-btn" onclick="selectTool(this, 'Captions')">
+                CC Captions
+            </button>
+
+            <button class="tool-btn" onclick="selectTool(this, 'Filters')">
+                ✨ Filters
+            </button>
+
+            <button class="tool-btn" onclick="selectTool(this, 'Effects')">
+                ⚡ Effects
+            </button>
+
+            <button class="tool-btn" onclick="selectTool(this, 'Transitions')">
+                🔄 Transitions
+            </button>
+
+            <button class="tool-btn" onclick="selectTool(this, 'Branding')">
+                ◈ Branding
+            </button>
+
+        </aside>
+
+
+        <!-- CENTER -->
+
+        <main class="editor-center">
+
+            <!-- PREVIEW -->
+
+            <section class="preview-area">
+
+                <div class="preview-box">
+
+                    <div class="preview-placeholder" id="placeholder">
+
+                        <h2>Your Video Preview</h2>
+
+                        <p>
+                            Upload a video or image to start editing
+                        </p>
+
+                        <div class="upload-area">
+
+                            <label class="upload-btn">
+
+                                + Upload Media
+
+                                <input
+                                    type="file"
+                                    id="mediaUpload"
+                                    accept="video/*,image/*"
+                                    onchange="loadMedia(event)"
+                                >
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <video
+                        id="videoPreview"
+                        controls>
+                    </video>
+
+                    <img
+                        id="imagePreview"
+                        style="
+                        width:100%;
+                        height:100%;
+                        object-fit:contain;
+                        display:none;
+                        "
+                    >
+
+                </div>
+
+            </section>
+
+
+            <!-- PLAY CONTROLS -->
+
+            <div class="play-controls">
+
+                <button
+                    class="play-btn"
+                    onclick="togglePlay()"
+                    id="playButton">
+                    ▶
+                </button>
+
+                <span class="time-display" id="timeDisplay">
+                    00:00 / 00:00
+                </span>
+
+            </div>
+
+
+            <!-- TIMELINE -->
+
+            <section class="timeline">
+
+                <div class="timeline-header">
+
+                    <span class="timeline-title">
+                        Timeline
+                    </span>
+
+                    <div class="timeline-tools">
+
+                        <button
+                            class="small-btn"
+                            onclick="addTextClip()">
+                            + Text
+                        </button>
+
+                        <button
+                            class="small-btn"
+                            onclick="addAudioClip()">
+                            + Audio
+                        </button>
+
+                        <button
+                            class="small-btn"
+                            onclick="clearTimeline()">
+                            Clear
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-track">
+
+                    <span class="track-label">
+                        VIDEO
+                    </span>
+
+                    <div
+                        class="clip"
+                        id="videoClip">
+                        Video Clip
+                    </div>
+
+                    <div
+                        class="clip clip-audio"
+                        id="audioClip">
+                        Audio Track
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- RIGHT SETTINGS -->
+
+        <aside class="settings-panel">
+
+            <!-- AI ASSISTANT -->
+
+            <section class="settings-section">
+
+                <h3>🤖 AI Editing Assistant</h3>
+
+                <div class="ai-edit-box">
+
+                    <p style="font-size:13px;color:#929bad;">
+                        Tell Zaro what you want to change.
+                    </p>
+
+                    <textarea
+                        id="aiInstruction"
+                        placeholder="Example: Make this video cinematic, add captions and remove silent parts...">
+                    </textarea>
+
+                    <button
+                        class="ai-edit-btn"
+                        onclick="applyAIEdit()">
+                        ✨ Apply AI Edit
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- TEXT -->
+
+            <section class="settings-section">
+
+                <h3>Text</h3>
+
+                <input
+                    class="setting-input"
+                    id="textInput"
+                    type="text"
+                    placeholder="Enter text">
+
+                <div class="setting-row">
+
+                    <button
+                        class="setting-option"
+                        onclick="addText('Title')">
+                        Title
+                    </button>
+
+                    <button
+                        class="setting-option"
+                        onclick="addText('Subtitle')">
+                        Subtitle
+                    </button>
+
+                </div>
+
+                <button
+                    class="setting-option"
+                    style="width:100%;"
+                    onclick="addText('Custom')">
+                    + Add Text
+                </button>
+
+            </section>
+
+
+            <!-- CAPTIONS -->
+
+            <section class="settings-section">
+
+                <h3>Captions</h3>
+
+                <button
+                    class="setting-option"
+                    style="width:100%;"
+                    onclick="generateCaptions()">
+                    ✨ Generate Captions
+                </button>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="settings-section">
+
+                <h3>Filters</h3>
+
+                <div class="setting-row">
+
+                    <button
+                        class="setting-option"
+                        onclick="applyFilter('Cinematic')">
+                        Cinematic
+                    </button>
+
+                    <button
+                        class="setting-option"
+                        onclick="applyFilter('Bright')">
+                        Bright
+                    </button>
+
+                </div>
+
+                <div class="setting-row">
+
+                    <button
+                        class="setting-option"
+                        onclick="applyFilter('Dark')">
+                        Dark
+                    </button>
+
+                    <button
+                        class="setting-option"
+                        onclick="applyFilter('Vintage')">
+                        Vintage
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ASPECT RATIO -->
+
+            <section class="settings-section">
+
+                <h3>Aspect Ratio</h3>
+
+                <div class="setting-row">
+
+                    <button
+                        class="setting-option"
+                        onclick="setRatio('16:9')">
+                        16:9
+                    </button>
+
+                    <button
+                        class="setting-option"
+                        onclick="setRatio('9:16')">
+                        9:16
+                    </button>
+
+                    <button
+                        class="setting-option"
+                        onclick="setRatio('1:1')">
+                        1:1
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- BRANDING -->
+
+            <section class="settings-section">
+
+                <h3>Branding</h3>
+
+                <button
+                    class="setting-option"
+                    style="width:100%;"
+                    onclick="addLogo()">
+                    + Add Logo
+                </button>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ===================================
+       MEDIA UPLOAD
+    =================================== */
+
+    let currentMedia = null;
+
+    function loadMedia(event) {
+
+        const file = event.target.files[0];
+
+        if (!file) return;
+
+        currentMedia = URL.createObjectURL(file);
+
+        const video = document.getElementById("videoPreview");
+        const image = document.getElementById("imagePreview");
+        const placeholder = document.getElementById("placeholder");
+
+        placeholder.style.display = "none";
+
+        if (file.type.startsWith("video/")) {
+
+            video.src = currentMedia;
+
+            video.style.display = "block";
+            image.style.display = "none";
+
+            video.load();
+
+        }
+
+        else if (file.type.startsWith("image/")) {
+
+            image.src = currentMedia;
+
+            image.style.display = "block";
+            video.style.display = "none";
+
+        }
+
+        alert("Media added to your Zaro project.");
+
+    }
+
+
+    /* ===================================
+       PLAY / PAUSE
+    =================================== */
+
+    function togglePlay() {
+
+        const video = document.getElementById("videoPreview");
+        const button = document.getElementById("playButton");
+
+        if (!video.src) {
+
+            alert("Upload a video first.");
+            return;
+
+        }
+
+        if (video.paused) {
+
+            video.play();
+            button.textContent = "❚❚";
+
+        } else {
+
+            video.pause();
+            button.textContent = "▶";
+
+        }
+
+    }
+
+
+    /* ===================================
+       TOOL SELECTION
+    =================================== */
+
+    function selectTool(button, tool) {
+
+        document.querySelectorAll(".tool-btn")
+            .forEach(btn => btn.classList.remove("active"));
+
+        button.classList.add("active");
+
+        console.log("Selected tool:", tool);
+
+    }
+
+
+    /* ===================================
+       TEXT
+    =================================== */
+
+    function addText(type) {
+
+        const text = document.getElementById("textInput").value;
+
+        if (!text) {
+
+            alert("Enter your text first.");
+            return;
+
+        }
+
+        alert(
+            type +
+            " added to timeline:\n\n" +
+            text
+        );
+
+    }
+
+
+    function addTextClip() {
+
+        alert("Text clip added to timeline.");
+
+    }
+
+
+    /* ===================================
+       AUDIO
+    =================================== */
+
+    function addAudioClip() {
+
+        alert("Audio track added to timeline.");
+
+    }
+
+
+    /* ===================================
+       CAPTIONS
+    =================================== */
+
+    function generateCaptions() {
+
+        alert(
+            "AI Caption Generation\n\n" +
+            "In the full version, Zaro will automatically listen to the video, generate captions and place them on the timeline."
+        );
+
+    }
+
+
+    /* ===================================
+       FILTERS
+    =================================== */
+
+    function applyFilter(filter) {
+
+        alert(
+            filter +
+            " filter applied.\n\n" +
+            "Real video processing will be connected through the Zaro backend."
+        );
+
+    }
+
+
+    /* ===================================
+       ASPECT RATIO
+    =================================== */
+
+    function setRatio(ratio) {
+
+        const preview = document.querySelector(".preview-box");
+
+        if (ratio === "16:9") {
+
+            preview.style.aspectRatio = "16 / 9";
+
+        }
+
+        if (ratio === "9:16") {
+
+            preview.style.aspectRatio = "9 / 16";
+
+        }
+
+        if (ratio === "1:1") {
+
+            preview.style.aspectRatio = "1 / 1";
+
+        }
+
+    }
+
+
+    /* ===================================
+       LOGO
+    =================================== */
+
+    function addLogo() {
+
+        alert(
+            "Brand Logo\n\n" +
+            "Later this will allow you to upload and position your Zaro Brand Kit logo."
+        );
+
+    }
+
+
+    /* ===================================
+       AI EDITING
+    =================================== */
+
+    function applyAIEdit() {
+
+        const instruction =
+            document.getElementById("aiInstruction").value.trim();
+
+        if (!instruction) {
+
+            alert("Tell Zaro what you want to edit.");
+
+            return;
+
+        }
+
+        alert(
+            "Zaro AI received your instruction:\n\n" +
+            instruction +
+            "\n\nAI processing will be connected to the backend later."
+        );
+
+    }
+
+
+    /* ===================================
+       TIMELINE
+    =================================== */
+
+    function clearTimeline() {
+
+        document.getElementById("videoClip").style.display = "none";
+        document.getElementById("audioClip").style.display = "none";
+
+        alert("Timeline cleared.");
+
+    }
+
+
+    /* ===================================
+       UNDO / REDO
+    =================================== */
+
+    function undoEdit() {
+
+        alert("Undo action ready for backend editor history.");
+
+    }
+
+
+    function redoEdit() {
+
+        alert("Redo action ready for backend editor history.");
+
+    }
+
+
+    /* ===================================
+       SAVE
+    =================================== */
+
+    function saveProject() {
+
+        const project = {
+
+            name: "Zaro AI Editor Project",
+
+            createdAt: new Date().toISOString(),
+
+            media: currentMedia || null
+
+        };
+
+        localStorage.setItem(
+            "zaroEditorProject",
+            JSON.stringify(project)
+        );
+
+        alert("Project saved locally.");
+
+    }
+
+
+    /* ===================================
+       EXPORT
+    =================================== */
+
+    function exportVideo() {
+
+        alert(
+            "Export started.\n\n" +
+            "The final version will send the project to the Zaro backend for real video rendering."
+        );
+
+    }
+
+</script>
+
+</body>
+</html>

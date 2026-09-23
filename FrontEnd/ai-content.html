@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Content | Zaro</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #08080d;
+            color: white;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 25px;
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        .logo span {
+            color: #8175ff;
+        }
+
+        .back {
+            color: #888894;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .back:hover {
+            color: white;
+        }
+
+        /* MAIN */
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .heading {
+            margin-bottom: 30px;
+        }
+
+        .heading p {
+            color: #8175ff;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .heading h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .heading h1 span {
+            color: #8175ff;
+        }
+
+        .heading > div {
+            color: #858592;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* WORKSPACE */
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: #101016;
+            border: 1px solid #24242e;
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            margin-bottom: 22px;
+        }
+
+        /* FORM */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #c6c6d0;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        textarea,
+        input,
+        select {
+            width: 100%;
+            border: 1px solid #292934;
+            background: #15151d;
+            color: white;
+            border-radius: 10px;
+            outline: none;
+            padding: 13px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        textarea {
+            height: 125px;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        input:focus,
+        select:focus {
+            border-color: #8175ff;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: #15151d;
+        }
+
+        .generate {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            background: linear-gradient(
+                135deg,
+                #7567ff,
+                #4c9cff
+            );
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .generate:hover {
+            transform: translateY(-2px);
+        }
+
+        /* OUTPUT */
+
+        .output {
+            min-height: 560px;
+        }
+
+        .empty {
+            height: 100%;
+            min-height: 510px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+            border-radius: 16px;
+            background: #1a1928;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+        }
+
+        .empty h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty p {
+            color: #72727d;
+            font-size: 13px;
+            max-width: 350px;
+            line-height: 1.6;
+        }
+
+        /* RESULT */
+
+        .result {
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .result-header h2 {
+            font-size: 18px;
+        }
+
+        .badge {
+            background: #1a1928;
+            color: #9b90ff;
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .result-card {
+            border: 1px solid #25252f;
+            background: #14141b;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        .result-card h3 {
+            font-size: 12px;
+            color: #9b90ff;
+            margin-bottom: 10px;
+        }
+
+        .result-card p {
+            color: #d1d1d8;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .hashtags {
+            color: #8e83ff !important;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #292934;
+            background: #17171f;
+            color: #d0d0d8;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .action-btn:hover {
+            border-color: #8175ff;
+            color: white;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .output {
+                min-height: auto;
+            }
+
+            .empty {
+                min-height: 350px;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            .page {
+                padding: 18px;
+            }
+
+            .topbar {
+                margin-bottom: 28px;
+            }
+
+            .heading h1 {
+                font-size: 29px;
+            }
+
+            .panel {
+                padding: 18px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="page">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <a href="zaro.html" class="logo">
+            ZARO<span>.</span>
+        </a>
+
+        <a href="Dashboard.html" class="back">
+            ← Dashboard
+        </a>
+
+    </header>
+
+
+    <main class="container">
+
+        <!-- HEADING -->
+
+        <div class="heading">
+
+            <p>AI CONTENT STUDIO</p>
+
+            <h1>
+                Turn ideas into
+                <span>content.</span>
+            </h1>
+
+            <div>
+                Tell Zaro what you want to create.
+                We'll structure the content for you.
+            </div>
+
+        </div>
+
+
+        <!-- WORKSPACE -->
+
+        <div class="workspace">
+
+
+            <!-- LEFT FORM -->
+
+            <section class="panel">
+
+                <h2 class="panel-title">
+                    Content brief
+                </h2>
+
+
+                <div class="form-group">
+
+                    <label>
+                        What do you want to create?
+                    </label>
+
+                    <textarea
+                        id="idea"
+                        placeholder="Example: Create an Instagram reel about why students should learn AI..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Platform
+                    </label>
+
+                    <select id="platform">
+
+                        <option>Instagram</option>
+
+                        <option>YouTube</option>
+
+                        <option>Facebook</option>
+
+                        <option>LinkedIn</option>
+
+                        <option>Twitter / X</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Content format
+                    </label>
+
+                    <select id="format">
+
+                        <option>Reel</option>
+
+                        <option>Post</option>
+
+                        <option>Carousel</option>
+
+                        <option>Short Video</option>
+
+                        <option>Article</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Tone
+                    </label>
+
+                    <select id="tone">
+
+                        <option>Trending</option>
+
+                        <option>Professional</option>
+
+                        <option>Educational</option>
+
+                        <option>Funny</option>
+
+                        <option>Inspirational</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Target audience
+                    </label>
+
+                    <input
+                        id="audience"
+                        type="text"
+                        placeholder="Example: College students"
+                    >
+
+                </div>
+
+
+                <button
+                    class="generate"
+                    onclick="generateContent()"
+                >
+
+                    ✦ Generate Content
+
+                </button>
+
+            </section>
+
+
+
+            <!-- RIGHT OUTPUT -->
+
+            <section class="panel output">
+
+
+                <!-- EMPTY -->
+
+                <div
+                    class="empty"
+                    id="emptyState"
+                >
+
+                    <div>
+
+                        <div class="empty-icon">
+                            ✦
+                        </div>
+
+                        <h2>
+                            Your content will appear here
+                        </h2>
+
+                        <p>
+                            Enter your idea and choose your
+                            preferences. Zaro will create
+                            a structured content concept.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RESULT -->
+
+                <div
+                    class="result"
+                    id="result"
+                >
+
+                    <div class="result-header">
+
+                        <h2>
+                            Generated Content
+                        </h2>
+
+                        <span class="badge">
+                            AI CONTENT
+                        </span>
+
+                    </div>
+
+
+                    <div class="result-card">
+
+                        <h3>
+                            🔥 HOOK
+                        </h3>
+
+                        <p id="hook"></p>
+
+                    </div>
+
+
+                    <div class="result-card">
+
+                        <h3>
+                            📝 CAPTION
+                        </h3>
+
+                        <p id="caption"></p>
+
+                    </div>
+
+
+                    <div class="result-card">
+
+                        <h3>
+                            🎬 VIDEO SCRIPT
+                        </h3>
+
+                        <p id="script"></p>
+
+                    </div>
+
+
+                    <div class="result-card">
+
+                        <h3>
+                            #️⃣ HASHTAGS
+                        </h3>
+
+                        <p
+                            id="hashtags"
+                            class="hashtags"
+                        ></p>
+
+                    </div>
+
+
+                    <div class="actions">
+
+                        <button
+                            class="action-btn"
+                            onclick="copyContent()"
+                        >
+                            Copy Content
+                        </button>
+
+                        <button
+                            class="action-btn"
+                            onclick="saveProject()"
+                        >
+                            Save Project
+                        </button>
+
+                        <button
+                            class="action-btn"
+                            onclick="generateContent()"
+                        >
+                            Regenerate
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+function generateContent() {
+
+    const idea =
+        document.getElementById("idea")
+        .value.trim();
+
+    const platform =
+        document.getElementById("platform")
+        .value;
+
+    const format =
+        document.getElementById("format")
+        .value;
+
+    const tone =
+        document.getElementById("tone")
+        .value;
+
+    const audience =
+        document.getElementById("audience")
+        .value.trim()
+        || "your target audience";
+
+
+    if (!idea) {
+
+        alert(
+            "Please enter an idea first."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "emptyState"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "result"
+    ).classList.add("show");
+
+
+    document.getElementById("hook")
+        .textContent =
+        "Stop scrolling! Here's why "
+        + idea
+        + " could change the way "
+        + audience
+        + " thinks.";
+
+
+    document.getElementById("caption")
+        .textContent =
+        "In today's world, "
+        + idea
+        + " is becoming more important than ever. "
+        + "If you're a "
+        + audience
+        + ", this is something you should know. "
+        + "Save this post and share it with someone who needs to see it.";
+
+
+    document.getElementById("script")
+        .textContent =
+        "HOOK: "
+        + idea
+        + ". "
+        + "INTRO: Let me show you why this matters. "
+        + "MAIN POINT: Explain the key idea clearly and "
+        + "give useful information to the audience. "
+        + "VALUE: Give one practical takeaway. "
+        + "CTA: Follow for more useful content.";
+
+
+    document.getElementById("hashtags")
+        .textContent =
+        "#Zaro #AI #ContentCreation #"
+        + platform.replace(/\s+/g, "")
+        + " #"
+        + format.replace(/\s+/g, "")
+        + " #Creator";
+
+
+}
+
+
+function copyContent() {
+
+    const text =
+
+        "HOOK:\n"
+        + document.getElementById("hook").textContent
+
+        + "\n\nCAPTION:\n"
+        + document.getElementById("caption").textContent
+
+        + "\n\nSCRIPT:\n"
+        + document.getElementById("script").textContent
+
+        + "\n\nHASHTAGS:\n"
+        + document.getElementById("hashtags").textContent;
+
+
+    navigator.clipboard.writeText(text);
+
+    alert("Content copied!");
+
+}
+
+
+function saveProject() {
+
+    alert(
+        "Project saving will be connected to your Zaro account database next."
+    );
+
+}
+
+</script>
+
+</body>
+</html>

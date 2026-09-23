@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zaro AI Video</title>
+
+    <link rel="stylesheet" href="zaro.css">
+
+    <style>
+        /* ================================
+           AI VIDEO WORKSPACE
+        ================================= */
+
+        body {
+            background: #08090d;
+            color: #ffffff;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .video-workspace {
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        .video-header h1 {
+            margin: 8px 0;
+            font-size: 32px;
+        }
+
+        .video-header p {
+            color: #999;
+            margin: 0;
+        }
+
+        .video-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 25px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        /* ================================
+           GENERATOR PANEL
+        ================================= */
+
+        .generator-panel,
+        .preview-panel {
+            background: #111319;
+            border: 1px solid #252832;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        textarea,
+        select,
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            background: #08090d;
+            color: #fff;
+            border: 1px solid #2c303a;
+            border-radius: 10px;
+            padding: 13px;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        select:focus,
+        input:focus {
+            border-color: #777;
+        }
+
+        /* ================================
+           GENERATION TYPE
+        ================================= */
+
+        .generation-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .type-btn {
+            padding: 13px;
+            background: #0b0c11;
+            color: #bbb;
+            border: 1px solid #292d36;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .type-btn:hover {
+            border-color: #777;
+            color: white;
+        }
+
+        .type-btn.active {
+            background: #ffffff;
+            color: #000;
+            border-color: #ffffff;
+        }
+
+        /* ================================
+           OPTIONS
+        ================================= */
+
+        .option-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* ================================
+           GENERATE BUTTON
+        ================================= */
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 11px;
+            background: #ffffff;
+            color: #000;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            background: #ddd;
+        }
+
+        /* ================================
+           PREVIEW
+        ================================= */
+
+        .preview-box {
+            min-height: 520px;
+            background: #08090d;
+            border: 1px dashed #30343e;
+            border-radius: 15px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+            padding: 20px;
+        }
+
+        .preview-content {
+            max-width: 500px;
+        }
+
+        .preview-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .preview-content h2 {
+            margin-bottom: 10px;
+        }
+
+        .preview-content p {
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* ================================
+           LOADING
+        ================================= */
+
+        .loading {
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loader {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #333;
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: auto auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ================================
+           RESULT
+        ================================= */
+
+        .result {
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-video {
+            width: 100%;
+            max-height: 430px;
+            border-radius: 12px;
+            background: #000;
+            display: block;
+            object-fit: contain;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .result-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 9px;
+            border: 1px solid #333;
+            background: #15171d;
+            color: white;
+            cursor: pointer;
+        }
+
+        .result-actions button:hover {
+            background: #22252d;
+        }
+
+        /* ================================
+           INFO CARDS
+        ================================= */
+
+        .video-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .info-card {
+            background: #0b0c11;
+            border: 1px solid #252832;
+            padding: 13px;
+            border-radius: 10px;
+        }
+
+        .info-card span {
+            display: block;
+            color: #777;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-card strong {
+            font-size: 14px;
+        }
+
+        /* ================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 900px) {
+
+            .video-workspace {
+                padding: 18px;
+            }
+
+            .video-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .video-header {
+                display: block;
+            }
+
+            .video-header h1 {
+                font-size: 27px;
+            }
+
+            .preview-box {
+                min-height: 350px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .generator-panel,
+            .preview-panel {
+                padding: 18px;
+                border-radius: 14px;
+            }
+
+            .generation-types {
+                grid-template-columns: 1fr;
+            }
+
+            .option-row {
+                grid-template-columns: 1fr;
+            }
+
+            .video-info {
+                grid-template-columns: 1fr;
+            }
+
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="video-workspace">
+
+    <!-- HEADER -->
+
+    <div class="video-header">
+
+        <div>
+            <a href="Dashboard.html" class="back-btn">
+                ← Back to Dashboard
+            </a>
+
+            <h1>AI Video Studio</h1>
+
+            <p>
+                Turn your ideas, images and scripts into videos.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="video-layout">
+
+        <!-- =================================
+             LEFT GENERATOR
+        ================================== -->
+
+        <div class="generator-panel">
+
+            <div class="panel-title">
+                Create Your Video
+            </div>
+
+
+            <!-- GENERATION TYPE -->
+
+            <div class="input-group">
+
+                <label>Generation Type</label>
+
+                <div class="generation-types">
+
+                    <button
+                        class="type-btn active"
+                        onclick="selectType(this, 'Text to Video')">
+
+                        ✍️ Text → Video
+
+                    </button>
+
+                    <button
+                        class="type-btn"
+                        onclick="selectType(this, 'Image to Video')">
+
+                        🖼️ Image → Video
+
+                    </button>
+
+                    <button
+                        class="type-btn"
+                        onclick="selectType(this, 'Script to Video')">
+
+                        📝 Script → Video
+
+                    </button>
+
+                    <button
+                        class="type-btn"
+                        onclick="selectType(this, 'Product Video')">
+
+                        🛍️ Product Video
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- IDEA -->
+
+            <div class="input-group">
+
+                <label>Your Idea</label>
+
+                <textarea
+                    id="videoIdea"
+                    placeholder="Example: Create a cinematic promotional video for a new smartphone..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- PLATFORM -->
+
+            <div class="option-row">
+
+                <div class="input-group">
+
+                    <label>Platform</label>
+
+                    <select id="platform">
+
+                        <option>Instagram Reels</option>
+                        <option>YouTube Shorts</option>
+                        <option>YouTube</option>
+                        <option>Facebook</option>
+                        <option>LinkedIn</option>
+                        <option>Website</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Duration</label>
+
+                    <select id="duration">
+
+                        <option>15 seconds</option>
+                        <option>30 seconds</option>
+                        <option>60 seconds</option>
+                        <option>90 seconds</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- STYLE -->
+
+            <div class="input-group">
+
+                <label>Video Style</label>
+
+                <select id="style">
+
+                    <option>Cinematic</option>
+                    <option>Trending Reel</option>
+                    <option>Professional</option>
+                    <option>Fast Paced</option>
+                    <option>Minimal</option>
+                    <option>Product Advertisement</option>
+                    <option>Documentary</option>
+
+                </select>
+
+            </div>
+
+
+            <!-- VOICE -->
+
+            <div class="option-row">
+
+                <div class="input-group">
+
+                    <label>Voiceover</label>
+
+                    <select id="voice">
+
+                        <option>AI Voice</option>
+                        <option>Male Voice</option>
+                        <option>Female Voice</option>
+                        <option>No Voice</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>Music</label>
+
+                    <select id="music">
+
+                        <option>AI Music</option>
+                        <option>Cinematic</option>
+                        <option>Trending</option>
+                        <option>Energetic</option>
+                        <option>No Music</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- GENERATE -->
+
+            <button
+                class="generate-btn"
+                onclick="generateVideo()">
+
+                ✨ Generate Video
+
+            </button>
+
+        </div>
+
+
+        <!-- =================================
+             RIGHT PREVIEW
+        ================================== -->
+
+        <div class="preview-panel">
+
+            <div class="panel-title">
+                Video Preview
+            </div>
+
+
+            <!-- INITIAL PREVIEW -->
+
+            <div
+                class="preview-box"
+                id="initialPreview">
+
+                <div class="preview-content">
+
+                    <div class="preview-icon">
+                        🎬
+                    </div>
+
+                    <h2>
+                        Your video will appear here
+                    </h2>
+
+                    <p>
+                        Describe your idea and choose your
+                        preferred style. Zaro will prepare
+                        your video generation workflow.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOADING -->
+
+            <div
+                class="preview-box loading"
+                id="loadingPreview">
+
+                <div class="preview-content">
+
+                    <div class="loader"></div>
+
+                    <h2>
+                        Creating your video...
+                    </h2>
+
+                    <p>
+                        Zaro AI is preparing your video.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                class="result"
+                id="videoResult">
+
+                <video
+                    id="resultVideo"
+                    class="result-video"
+                    controls
+                    loop>
+
+                </video>
+
+
+                <div class="video-info">
+
+                    <div class="info-card">
+
+                        <span>Platform</span>
+
+                        <strong id="resultPlatform">
+                            Instagram Reels
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <span>Duration</span>
+
+                        <strong id="resultDuration">
+                            15 seconds
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <span>Style</span>
+
+                        <strong id="resultStyle">
+                            Cinematic
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-actions">
+
+                    <button onclick="saveVideo()">
+                        💾 Save Project
+                    </button>
+
+                    <button onclick="downloadVideo()">
+                        ⬇️ Export Video
+                    </button>
+
+                    <button onclick="createAnother()">
+                        🔄 Create Another
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ================================
+       SELECT GENERATION TYPE
+    ================================= */
+
+    let selectedType = "Text to Video";
+
+
+    function selectType(button, type) {
+
+        document
+            .querySelectorAll(".type-btn")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+        button.classList.add("active");
+
+        selectedType = type;
+
+    }
+
+
+    /* ================================
+       GENERATE VIDEO
+    ================================= */
+
+    function generateVideo() {
+
+        const idea =
+            document.getElementById("videoIdea").value.trim();
+
+        const platform =
+            document.getElementById("platform").value;
+
+        const duration =
+            document.getElementById("duration").value;
+
+        const style =
+            document.getElementById("style").value;
+
+
+        if (!idea) {
+
+            alert("Please describe your video idea first.");
+
+            return;
+
+        }
+
+
+        /* Hide initial preview */
+
+        document
+            .getElementById("initialPreview")
+            .style.display = "none";
+
+
+        /* Show loading */
+
+        document
+            .getElementById("loadingPreview")
+            .classList.add("active");
+
+
+        /* Hide previous result */
+
+        document
+            .getElementById("videoResult")
+            .classList.remove("active");
+
+
+        /*
+            Temporary frontend simulation.
+
+            Later this function will send the
+            request to the Zaro AI backend API.
+        */
+
+        setTimeout(() => {
+
+            document
+                .getElementById("loadingPreview")
+                .classList.remove("active");
+
+
+            document
+                .getElementById("videoResult")
+                .classList.add("active");
+
+
+            document
+                .getElementById("resultPlatform")
+                .textContent = platform;
+
+
+            document
+                .getElementById("resultDuration")
+                .textContent = duration;
+
+
+            document
+                .getElementById("resultStyle")
+                .textContent = style;
+
+
+            /*
+                Temporary demo video.
+
+                Later this will be replaced with
+                the URL returned by the AI API.
+            */
+
+            document
+                .getElementById("resultVideo")
+                .src =
+                "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+
+
+        }, 2000);
+
+    }
+
+
+    /* ================================
+       SAVE VIDEO
+    ================================= */
+
+    function saveVideo() {
+
+        alert(
+            "Project saved to My Projects.\n\n" +
+            "Database connection will be added later."
+        );
+
+    }
+
+
+    /* ================================
+       DOWNLOAD
+    ================================= */
+
+    function downloadVideo() {
+
+        const video =
+            document.getElementById("resultVideo");
+
+
+        if (!video.src) {
+
+            alert("No video available.");
+
+            return;
+
+        }
+
+
+        const link =
+            document.createElement("a");
+
+        link.href = video.src;
+
+        link.download = "zaro-ai-video.mp4";
+
+        link.target = "_blank";
+
+        link.click();
+
+    }
+
+
+    /* ================================
+       CREATE ANOTHER
+    ================================= */
+
+    function createAnother() {
+
+        document
+            .getElementById("videoResult")
+            .classList.remove("active");
+
+
+        document
+            .getElementById("initialPreview")
+            .style.display = "flex";
+
+
+        document
+            .getElementById("videoIdea")
+            .value = "";
+
+    }
+
+</script>
+
+</body>
+</html>

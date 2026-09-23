@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Zaro Technologies</title>
+
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+
+    <div class="auth-page">
+
+        <!-- LEFT BRAND SECTION -->
+        <div class="auth-brand">
+
+            <div class="brand-content">
+
+                <a href="zaro.html" class="logo">
+                    ZARO<span>.</span>
+                </a>
+
+                <div class="brand-text">
+                    <p class="eyebrow">ZARO TECHNOLOGIES</p>
+
+                    <h1>
+                        Create.
+                        <span>Edit.</span>
+                        Automate.
+                    </h1>
+
+                    <p>
+                        Your AI-powered creative workspace for
+                        content, video, image, audio and editing.
+                    </p>
+                </div>
+
+                <div class="brand-features">
+                    <div>
+                        <span>✦</span>
+                        <p>AI Content Creation</p>
+                    </div>
+
+                    <div>
+                        <span>✦</span>
+                        <p>AI Video & Image</p>
+                    </div>
+
+                    <div>
+                        <span>✦</span>
+                        <p>Powerful Creative Tools</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT LOGIN SECTION -->
+        <div class="auth-form-section">
+
+            <div class="auth-box">
+
+                <a href="zaro.html" class="mobile-logo">
+                    ZARO<span>.</span>
+                </a>
+
+                <div class="form-heading">
+                    <p class="eyebrow">WELCOME BACK</p>
+
+                    <h2>Login to Zaro</h2>
+
+                    <p>
+                        Continue creating amazing content.
+                    </p>
+                </div>
+
+
+                <form id="loginForm">
+
+                    <!-- EMAIL -->
+                    <div class="input-group">
+
+                        <label for="email">Email address</label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">✉</span>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="you@example.com"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div class="input-group">
+
+                        <div class="label-row">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a href="#" onclick="forgotPassword(event)">
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                onclick="togglePassword()"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+                    <div id="loginMessage"></div>
+
+
+                    <!-- LOGIN BUTTON -->
+                    <button type="submit" class="auth-button">
+
+                        <span>Login to Zaro</span>
+
+                        <span class="arrow">→</span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- DIVIDER -->
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <!-- GOOGLE LOGIN -->
+<button
+    type="button"
+    class="google-button"
+    id="googleLoginBtn"
+    onclick="loginWithGoogle()">
+
+    <span class="google-icon">G</span>
+    Continue with Google
+
+</button>
+
+
+                <!-- SIGNUP -->
+                <p class="switch-auth">
+
+                    Don't have a Zaro account?
+
+                    <a href="signup.html">
+                        Create account
+                    </a>
+
+                </p>
+
+
+                <a href="zaro.html" class="back-home">
+                    ← Back to Zaro Technologies
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+<script>
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
+const loginButton = loginForm.querySelector(".auth-button");
+
+loginForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    loginButton.disabled = true;
+    loginButton.innerHTML = "<span>Logging in...</span>";
+    loginMessage.className = "";
+    loginMessage.textContent = "";
+
+    try {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Invalid email or password.");
+        }
+
+        localStorage.setItem("zaroToken", data.token);
+        localStorage.setItem("zaroUser", JSON.stringify(data.user));
+
+        loginMessage.className = "success-message";
+        loginMessage.textContent = "Login successful! Redirecting...";
+
+        setTimeout(() => {
+            window.location.href = "Dashboard.html";
+        }, 700);
+    } catch (error) {
+        loginMessage.className = "error-message";
+        loginMessage.textContent = error.message || "Unable to connect to Zaro server.";
+        loginButton.disabled = false;
+        loginButton.innerHTML = "<span>Login to Zaro</span><span class='arrow'>→</span>";
+    }
+});
+
+function togglePassword() {
+    const password = document.getElementById("password");
+    const button = document.querySelector(".password-toggle");
+    const visible = password.type === "text";
+    password.type = visible ? "password" : "text";
+    button.textContent = visible ? "Show" : "Hide";
+}
+
+function forgotPassword(event) {
+    event.preventDefault();
+    alert("Password recovery will be available soon.");
+}
+</script>
+</body>
+</html>

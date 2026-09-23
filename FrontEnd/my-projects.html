@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zaro - My Projects</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #080b12;
+            color: white;
+        }
+
+        /* TOP BAR */
+
+        .topbar {
+            height: 70px;
+            padding: 0 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: #0d111a;
+            border-bottom: 1px solid #202633;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            color: #7c5cff;
+        }
+
+        .back-btn {
+            padding: 10px 16px;
+
+            border: 1px solid #303746;
+            border-radius: 8px;
+
+            background: #151a24;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: #202735;
+        }
+
+        /* MAIN */
+
+        .container {
+            max-width: 1250px;
+            margin: auto;
+            padding: 35px 25px;
+        }
+
+        .heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .heading p {
+            color: #8992a3;
+            margin-top: 7px;
+        }
+
+        /* SEARCH */
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            flex: 1;
+
+            padding: 13px 15px;
+
+            background: #111620;
+            border: 1px solid #303746;
+
+            border-radius: 8px;
+
+            color: white;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #7c5cff;
+        }
+
+        /* FILTERS */
+
+        .filters {
+            display: flex;
+            gap: 8px;
+
+            overflow-x: auto;
+            padding-bottom: 10px;
+
+            margin-bottom: 25px;
+        }
+
+        .filter-btn {
+            white-space: nowrap;
+
+            padding: 9px 15px;
+
+            border: 1px solid #303746;
+            border-radius: 20px;
+
+            background: #111620;
+            color: #cdd3df;
+
+            cursor: pointer;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #7c5cff;
+            border-color: #7c5cff;
+            color: white;
+        }
+
+        /* PROJECT GRID */
+
+        .project-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill, minmax(260px, 1fr));
+
+            gap: 20px;
+        }
+
+        /* PROJECT CARD */
+
+        .project-card {
+            background: #0e131d;
+
+            border: 1px solid #202633;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            transition: 0.25s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: #3a4355;
+        }
+
+        .project-preview {
+            height: 150px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #171d2a,
+                    #0a0e16
+                );
+
+            font-size: 45px;
+        }
+
+        .project-info {
+            padding: 16px;
+        }
+
+        .project-info h3 {
+            margin: 0 0 8px;
+            font-size: 17px;
+        }
+
+        .project-info p {
+            margin: 0 0 12px;
+
+            color: #8992a3;
+            font-size: 13px;
+        }
+
+        .project-type {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            border-radius: 5px;
+
+            background: #191f2c;
+
+            color: #aeb6c6;
+
+            font-size: 11px;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 8px;
+
+            margin-top: 15px;
+        }
+
+        .project-actions button {
+            flex: 1;
+
+            padding: 9px;
+
+            border-radius: 7px;
+
+            border: 1px solid #303746;
+
+            background: #151a24;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        .project-actions button:hover {
+            background: #202735;
+        }
+
+        .delete-btn:hover {
+            background: #4a2027 !important;
+        }
+
+        /* EMPTY STATE */
+
+        .empty-state {
+            display: none;
+
+            text-align: center;
+
+            padding: 80px 20px;
+
+            background: #0e131d;
+
+            border: 1px solid #202633;
+
+            border-radius: 12px;
+        }
+
+        .empty-state .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #8992a3;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 650px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            .heading {
+                display: block;
+            }
+
+            .heading h1 {
+                font-size: 25px;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <div class="logo">
+            ZA<span>RO</span>
+        </div>
+
+        <button
+            class="back-btn"
+            onclick="goDashboard()">
+
+            ← Dashboard
+
+        </button>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="container">
+
+        <div class="heading">
+
+            <div>
+
+                <h1>My Projects</h1>
+
+                <p>
+                    Manage everything you've created with Zaro.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search your projects..."
+                oninput="searchProjects()">
+
+        </div>
+
+
+        <!-- FILTERS -->
+
+        <div class="filters">
+
+            <button
+                class="filter-btn active"
+                onclick="filterProjects('All', this)">
+                All
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProjects('AI Content', this)">
+                AI Content
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProjects('AI Video', this)">
+                AI Video
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProjects('AI Image', this)">
+                AI Image
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProjects('AI Audio', this)">
+                AI Audio
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProjects('AI Editor', this)">
+                AI Editor
+            </button>
+
+        </div>
+
+
+        <!-- PROJECTS -->
+
+        <div
+            class="project-grid"
+            id="projectGrid">
+
+
+            <!-- PROJECT 1 -->
+
+            <div
+                class="project-card"
+                data-type="AI Content"
+                data-name="Instagram Growth Ideas">
+
+                <div class="project-preview">
+                    📝
+                </div>
+
+                <div class="project-info">
+
+                    <h3>
+                        Instagram Growth Ideas
+                    </h3>
+
+                    <p>
+                        AI-generated social media content.
+                    </p>
+
+                    <span class="project-type">
+                        AI Content
+                    </span>
+
+                    <div class="project-actions">
+
+                        <button
+                            onclick="openProject('AI Content')">
+                            Open
+                        </button>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteProject(this)">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJECT 2 -->
+
+            <div
+                class="project-card"
+                data-type="AI Video"
+                data-name="Product Reel">
+
+                <div class="project-preview">
+                    🎬
+                </div>
+
+                <div class="project-info">
+
+                    <h3>
+                        Product Reel
+                    </h3>
+
+                    <p>
+                        Short-form promotional video.
+                    </p>
+
+                    <span class="project-type">
+                        AI Video
+                    </span>
+
+                    <div class="project-actions">
+
+                        <button
+                            onclick="openProject('AI Video')">
+                            Open
+                        </button>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteProject(this)">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJECT 3 -->
+
+            <div
+                class="project-card"
+                data-type="AI Image"
+                data-name="Brand Poster">
+
+                <div class="project-preview">
+                    🖼️
+                </div>
+
+                <div class="project-info">
+
+                    <h3>
+                        Brand Poster
+                    </h3>
+
+                    <p>
+                        AI-generated promotional artwork.
+                    </p>
+
+                    <span class="project-type">
+                        AI Image
+                    </span>
+
+                    <div class="project-actions">
+
+                        <button
+                            onclick="openProject('AI Image')">
+                            Open
+                        </button>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteProject(this)">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJECT 4 -->
+
+            <div
+                class="project-card"
+                data-type="AI Audio"
+                data-name="Product Voiceover">
+
+                <div class="project-preview">
+                    🎙️
+                </div>
+
+                <div class="project-info">
+
+                    <h3>
+                        Product Voiceover
+                    </h3>
+
+                    <p>
+                        AI voice narration for a video.
+                    </p>
+
+                    <span class="project-type">
+                        AI Audio
+                    </span>
+
+                    <div class="project-actions">
+
+                        <button
+                            onclick="openProject('AI Audio')">
+                            Open
+                        </button>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteProject(this)">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJECT 5 -->
+
+            <div
+                class="project-card"
+                data-type="AI Editor"
+                data-name="Travel Reel">
+
+                <div class="project-preview">
+                    ✂️
+                </div>
+
+                <div class="project-info">
+
+                    <h3>
+                        Travel Reel
+                    </h3>
+
+                    <p>
+                        Video editing project.
+                    </p>
+
+                    <span class="project-type">
+                        AI Editor
+                    </span>
+
+                    <div class="project-actions">
+
+                        <button
+                            onclick="openProject('AI Editor')">
+                            Open
+                        </button>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteProject(this)">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- EMPTY -->
+
+        <div
+            class="empty-state"
+            id="emptyState">
+
+            <div class="icon">
+                📁
+            </div>
+
+            <h2>
+                No projects found
+            </h2>
+
+            <p>
+                Create something with Zaro and it will appear here.
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        let currentFilter = "All";
+
+
+        /* =============================
+           DASHBOARD
+        ============================= */
+
+        function goDashboard() {
+
+            window.location.href = "Dashboard.html";
+
+        }
+
+
+        /* =============================
+           FILTER
+        ============================= */
+
+        function filterProjects(type, button) {
+
+            currentFilter = type;
+
+            document
+                .querySelectorAll(".filter-btn")
+                .forEach(btn => {
+                    btn.classList.remove("active");
+                });
+
+            button.classList.add("active");
+
+            applyFilters();
+
+        }
+
+
+        /* =============================
+           SEARCH
+        ============================= */
+
+        function searchProjects() {
+
+            applyFilters();
+
+        }
+
+
+        /* =============================
+           APPLY FILTERS
+        ============================= */
+
+        function applyFilters() {
+
+            const search =
+                document
+                    .getElementById("searchInput")
+                    .value
+                    .toLowerCase();
+
+            const cards =
+                document.querySelectorAll(".project-card");
+
+            let visible = 0;
+
+
+            cards.forEach(card => {
+
+                const type =
+                    card.dataset.type;
+
+                const name =
+                    card.dataset.name.toLowerCase();
+
+
+                const matchesType =
+                    currentFilter === "All" ||
+                    type === currentFilter;
+
+                const matchesSearch =
+                    name.includes(search);
+
+
+                if (matchesType && matchesSearch) {
+
+                    card.style.display = "block";
+
+                    visible++;
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+
+            document.getElementById("emptyState")
+                .style.display =
+                visible === 0
+                    ? "block"
+                    : "none";
+
+        }
+
+
+        /* =============================
+           OPEN PROJECT
+        ============================= */
+
+        function openProject(type) {
+
+            if (type === "AI Content") {
+                window.location.href = "ai-content.html";
+            }
+
+            else if (type === "AI Video") {
+                window.location.href = "ai-video.html";
+            }
+
+            else if (type === "AI Image") {
+                window.location.href = "ai-image.html";
+            }
+
+            else if (type === "AI Audio") {
+                window.location.href = "ai-audio.html";
+            }
+
+            else if (type === "AI Editor") {
+                window.location.href = "ai-editor.html";
+            }
+
+        }
+
+
+        /* =============================
+           DELETE PROJECT
+        ============================= */
+
+        function deleteProject(button) {
+
+            const confirmDelete =
+                confirm(
+                    "Are you sure you want to delete this project?"
+                );
+
+            if (!confirmDelete) {
+                return;
+            }
+
+
+            const card =
+                button.closest(".project-card");
+
+            card.remove();
+
+            applyFilters();
+
+        }
+
+    </script>
+
+</body>
+</html>

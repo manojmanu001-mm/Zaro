@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zaro Pricing</title>
+
+    <!-- Zaro existing stylesheet -->
+    <link rel="stylesheet" href="zaro.css">
+
+    <style>
+        .free-section,
+        .opening-offer {
+            margin-bottom: 70px;
+        }
+
+        .offer-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            margin-bottom: 14px;
+            border-radius: 20px;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .free-card {
+            border: 1px solid #d8dce5;
+        }
+
+        .free-card .price {
+            margin-top: 12px;
+        }
+
+        .free-card .price-note {
+            display: block;
+            margin-top: 6px;
+        }
+
+        .offer-note {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.75;
+        }
+
+        @media (max-width: 700px) {
+            .free-section,
+            .opening-offer {
+                margin-bottom: 45px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <header class="pricing-navbar">
+
+        <div class="pricing-logo">
+            <span class="logo-mark">Z</span>
+            <span>Zaro</span>
+        </div>
+
+        <nav>
+            <a href="zaro.html">Home</a>
+            <a href="Dashboard.html">Dashboard</a>
+            <a href="pricing.html" class="active">Pricing</a>
+        </nav>
+
+        <a href="login.html" class="pricing-login">
+            Login
+        </a>
+
+    </header>
+
+
+  
+
+    
+
+
+
+    <!-- =========================
+         OPENING OFFER
+    ========================== -->
+
+    <section class="pricing-section opening-offer">
+
+        <div class="section-heading">
+            <span class="offer-badge">🚀 LAUNCH SPECIAL</span>
+            <h2>Opening Offer — 1 Month</h2>
+            <p>
+                Low introductory pricing for Zaro's launch.
+                Choose a plan after your free credits are finished.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <p class="plan-description">
+                    For users getting started with Zaro.
+                </p>
+
+                <div class="price">₹59</div>
+                <span class="price-note">1 month opening offer</span>
+
+                <ul>
+                    <li>✓ AI Content</li>
+                    <li>✓ AI Image</li>
+                    <li>✓ Basic AI tools</li>
+                    <li>✓ Basic editing</li>
+                    <li>✓ Monthly access</li>
+                </ul>
+
+                <button onclick="selectPlan('Starter Opening Offer - ₹59')">
+                    Get Starter — ₹59
+                </button>
+            </div>
+
+
+            <div class="pricing-card popular">
+                <div class="popular-label">MOST POPULAR</div>
+
+                <h3>Creator</h3>
+                <p class="plan-description">
+                    For creators and regular social media use.
+                </p>
+
+                <div class="price">₹159</div>
+                <span class="price-note">1 month opening offer</span>
+
+                <ul>
+                    <li>✓ AI Content</li>
+                    <li>✓ AI Image</li>
+                    <li>✓ AI Video</li>
+                    <li>✓ AI Audio</li>
+                    <li>✓ AI Editor</li>
+                    <li>✓ Higher usage limits</li>
+                </ul>
+
+                <button onclick="selectPlan('Creator Opening Offer - ₹159')">
+                    Get Creator — ₹159
+                </button>
+            </div>
+
+
+            <div class="pricing-card">
+                <h3>Pro</h3>
+                <p class="plan-description">
+                    For serious creators and small businesses.
+                </p>
+
+                <div class="price">₹359</div>
+                <span class="price-note">1 month opening offer</span>
+
+                <ul>
+                    <li>✓ AI Content</li>
+                    <li>✓ AI Image</li>
+                    <li>✓ AI Video</li>
+                    <li>✓ AI Audio</li>
+                    <li>✓ Advanced editing</li>
+                    <li>✓ Higher usage limits</li>
+                    <li>✓ Priority processing</li>
+                </ul>
+
+                <button onclick="selectPlan('Pro Opening Offer - ₹359')">
+                    Get Pro — ₹359
+                </button>
+            </div>
+
+        </div>
+
+        <p class="offer-note">
+            Opening Offer pricing is introductory for the first month.
+            Regular pricing may apply after the opening period.
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         WEB & TECHNOLOGY
+    ========================== -->
+
+    <section class="pricing-section">
+
+        <div class="section-heading">
+            <h2>🌐 Web & Technology</h2>
+            <p>
+                Professional websites and technology solutions.
+                Web services are paid separately and are not included in free credits.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+
+            <div class="pricing-card">
+                <h3>Basic Website</h3>
+                <div class="price">₹4,999</div>
+                <ul>
+                    <li>✓ Responsive website</li>
+                    <li>✓ Basic pages</li>
+                    <li>✓ Mobile friendly</li>
+                </ul>
+                <button onclick="selectPlan('Website - Basic')">Choose Plan</button>
+            </div>
+
+            <div class="pricing-card popular">
+                <div class="popular-label">POPULAR</div>
+                <h3>Business Website</h3>
+                <div class="price">₹9,999</div>
+                <ul>
+                    <li>✓ Professional design</li>
+                    <li>✓ Multiple pages</li>
+                    <li>✓ Responsive layout</li>
+                    <li>✓ Business features</li>
+                </ul>
+                <button onclick="selectPlan('Website - Business')">Choose Plan</button>
+            </div>
+
+            <div class="pricing-card">
+                <h3>Professional</h3>
+                <div class="price">₹19,999</div>
+                <ul>
+                    <li>✓ Advanced website</li>
+                    <li>✓ Custom functionality</li>
+                    <li>✓ Professional UI</li>
+                    <li>✓ Database integration</li>
+                </ul>
+                <button onclick="selectPlan('Website - Professional')">Choose Plan</button>
+            </div>
+
+            <div class="pricing-card">
+                <h3>E-Commerce</h3>
+                <div class="price">₹24,999+</div>
+                <ul>
+                    <li>✓ Online store</li>
+                    <li>✓ Product management</li>
+                    <li>✓ Customer system</li>
+                    <li>✓ Payment integration</li>
+                </ul>
+                <button onclick="selectPlan('Website - E-Commerce')">Choose Plan</button>
+            </div>
+
+            <div class="pricing-card">
+                <h3>Custom AI Website</h3>
+                <div class="price">₹29,999+</div>
+                <ul>
+                    <li>✓ AI integration</li>
+                    <li>✓ Custom features</li>
+                    <li>✓ Database</li>
+                    <li>✓ Custom development</li>
+                </ul>
+                <button onclick="selectPlan('Custom AI Website')">Contact Zaro</button>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- =========================
+         FINAL CTA
+    ========================== -->
+
+    <section class="pricing-cta">
+
+        <h2>
+            Not sure which plan to choose?
+        </h2>
+
+        <p>
+            Tell us what you want to build and Zaro can help
+            you choose the right solution.
+        </p>
+
+        <button onclick="contactZaro()">
+            Talk to Zaro
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="pricing-footer">
+
+        <div>
+            <strong>Zaro</strong>
+            <p>
+                AI • Creativity • Technology
+            </p>
+        </div>
+
+        <p>
+            © 2026 Zaro. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- Pricing JavaScript -->
+    <script>
+
+        function selectPlan(plan) {
+            localStorage.setItem("zaroSelectedPlan", plan);
+            localStorage.setItem("zaroPaymentStatus", "PENDING");
+            localStorage.setItem("zaroAccessStatus", "PAID_PENDING");
+            localStorage.setItem("zaroWatermark", "DISABLED");
+
+            window.location.href = "signup.html";
+        }
+
+
+        function selectFreePlan(tool) {
+
+            localStorage.setItem("zaroSelectedPlan", tool);
+            localStorage.setItem("zaroPaymentStatus", "FREE");
+            localStorage.setItem("zaroAccessStatus", "LIMITED");
+            localStorage.setItem("zaroWatermark", "ENABLED");
+
+            window.location.href = "signup.html";
+        }
+
+
+        function contactZaro() {
+            alert(
+                "Welcome to Zaro!\n\n" +
+                "Tell us what you want to build and our team will help you choose the right solution."
+            );
+        }
+
+    </script>
+
+</body>
+</html>
